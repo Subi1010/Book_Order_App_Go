@@ -37,6 +37,7 @@ func (bc *BookController) GetBooks(c *gin.Context) {
 // @Accept json
 // @Produce json
 // @Param book body models.Book true "Book information"
+// @Security BearerAuth
 // @Success 201 {object} models.Book
 // @Failure 400 {object} map[string]string
 // @Router /books [post]

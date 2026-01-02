@@ -45,7 +45,7 @@ func InitPostgresDB() (*gorm.DB, error) {
 
 	// Run auto migration for development environment
 	if env == "" || env == "development" || env == "dev" {
-		if err := db.AutoMigrate(&models.Book{}, &models.Order{}); err != nil {
+		if err := db.AutoMigrate(&models.Book{}, &models.Order{}, &models.User{}); err != nil {
 			return nil, fmt.Errorf("error running auto migration: %w", err)
 		}
 		log.Println("Database auto migration completed successfully (dev environment)")

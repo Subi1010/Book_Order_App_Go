@@ -14,4 +14,5 @@ func RegisterRoutes(r *gin.Engine) {
 
 	RegisterBookRoutes(api)
 	RegisterOrderRoutes(api)
+  RegisterUserRoutes(api)
 }
