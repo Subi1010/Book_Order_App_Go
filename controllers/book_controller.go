@@ -36,16 +36,23 @@ func (bc *BookController) GetBooks(c *gin.Context) {
 // @Tags books
 // @Accept json
 // @Produce json
-// @Param book body models.Book true "Book information"
+// @Param book body models.CreateBookRequest true "Book information"
 // @Security BearerAuth
 // @Success 201 {object} models.Book
 // @Failure 400 {object} map[string]string
 // @Router /books [post]
 func (bc *BookController) AddBook(c *gin.Context) {
-	var book models.Book
-	if err := c.ShouldBindJSON(&book); err != nil {
+	var req models.CreateBookRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
+	}
+
+	// Convert request to Book model
+	book := models.Book{
+		Title:  req.Title,
+		Author: req.Author,
+		Price:  req.Price,
 	}
 
 	created := bc.service.Create(book)

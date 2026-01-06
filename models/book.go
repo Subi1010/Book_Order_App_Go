@@ -14,3 +14,10 @@ type Book struct {
 	Author    string     `json:"author" binding:"required" gorm:"not null" example:"Alan A. A. Donovan"`
 	Price     float64    `json:"price" binding:"required" gorm:"not null" example:"29.99"`
 }
+
+// CreateBookRequest represents the request body for creating a book
+type CreateBookRequest struct {
+	Title  string  `json:"title" binding:"required" example:"The Go Programming Language"`
+	Author string  `json:"author" binding:"required" example:"Alan A. A. Donovan"`
+	Price  float64 `json:"price" binding:"required" example:"29.99"`
+}

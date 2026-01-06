@@ -64,7 +64,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.Book"
+                            "$ref": "#/definitions/models.CreateBookRequest"
                         }
                     }
                 ],
@@ -131,7 +131,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.Order"
+                            "$ref": "#/definitions/models.CreateOrderRequest"
                         }
                     }
                 ],
@@ -368,6 +368,51 @@ const docTemplate = `{
                 },
                 "updated_at": {
                     "type": "string"
+                }
+            }
+        },
+        "models.CreateBookRequest": {
+            "type": "object",
+            "required": [
+                "author",
+                "price",
+                "title"
+            ],
+            "properties": {
+                "author": {
+                    "type": "string",
+                    "example": "Alan A. A. Donovan"
+                },
+                "price": {
+                    "type": "number",
+                    "example": 29.99
+                },
+                "title": {
+                    "type": "string",
+                    "example": "The Go Programming Language"
+                }
+            }
+        },
+        "models.CreateOrderRequest": {
+            "type": "object",
+            "required": [
+                "book_id",
+                "customer_name",
+                "quantity"
+            ],
+            "properties": {
+                "book_id": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "customer_name": {
+                    "type": "string",
+                    "example": "John Doe"
+                },
+                "quantity": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "example": 2
                 }
             }
         },

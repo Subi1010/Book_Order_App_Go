@@ -33,6 +33,39 @@ definitions:
     - price
     - title
     type: object
+  models.CreateBookRequest:
+    properties:
+      author:
+        example: Alan A. A. Donovan
+        type: string
+      price:
+        example: 29.99
+        type: number
+      title:
+        example: The Go Programming Language
+        type: string
+    required:
+    - author
+    - price
+    - title
+    type: object
+  models.CreateOrderRequest:
+    properties:
+      book_id:
+        example: 1
+        type: integer
+      customer_name:
+        example: John Doe
+        type: string
+      quantity:
+        example: 2
+        minimum: 1
+        type: integer
+    required:
+    - book_id
+    - customer_name
+    - quantity
+    type: object
   models.LoginRequest:
     properties:
       password:
@@ -154,7 +187,7 @@ paths:
         name: book
         required: true
         schema:
-          $ref: '#/definitions/models.Book'
+          $ref: '#/definitions/models.CreateBookRequest'
       produces:
       - application/json
       responses:
@@ -200,7 +233,7 @@ paths:
         name: order
         required: true
         schema:
-          $ref: '#/definitions/models.Order'
+          $ref: '#/definitions/models.CreateOrderRequest'
       produces:
       - application/json
       responses:

@@ -2,12 +2,14 @@ package services
 
 import (
 	"book_order_app/config"
+	"book_order_app/middleware"
 	"book_order_app/models"
 	"errors"
-	"log"
 
 	"gorm.io/gorm"
 )
+
+var userLogger = middleware.GetLogger()
 
 type UserService interface {
 	Register(req models.RegisterRequest) (*models.User, error)
@@ -41,10 +43,15 @@ func (us *userService) Register(req models.RegisterRequest) (*models.User, error
 	}
 
 	if err := us.dbHandler.DB.Create(&user).Error; err != nil {
-		log.Printf("Error creating user: %v", err)
+		userLogger.WithError(err).WithField("username", req.Username).Error("Error creating user")
 		return nil, errors.New("failed to create user")
 	}
 
+	userLogger.WithFields(map[string]interface{}{
+		"user_id":  user.ID,
+		"username": user.Username,
+		"role":     user.Role,
+	}).Info("Successfully registered user")
 	return &user, nil
 }
 
@@ -53,17 +60,23 @@ func (us *userService) Login(req models.LoginRequest) (*models.User, error) {
 	var user models.User
 	if err := us.dbHandler.DB.Where("username = ?", req.Username).First(&user).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
+			userLogger.WithField("username", req.Username).Warn("Login attempt with invalid username")
 			return nil, errors.New("invalid username or password")
 		}
-		log.Printf("Error finding user: %v", err)
+		userLogger.WithError(err).WithField("username", req.Username).Error("Error finding user during login")
 		return nil, errors.New("failed to authenticate")
 	}
 
 	// Check password
 	if err := user.CheckPassword(req.Password); err != nil {
+		userLogger.WithField("username", req.Username).Warn("Login attempt with invalid password")
 		return nil, errors.New("invalid username or password")
 	}
 
+	userLogger.WithFields(map[string]interface{}{
+		"user_id":  user.ID,
+		"username": user.Username,
+	}).Info("User logged in successfully")
 	return &user, nil
 }
 
@@ -74,7 +87,7 @@ func (us *userService) GetByUsername(username string) (*models.User, error) {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, errors.New("user not found")
 		}
-		log.Printf("Error finding user: %v", err)
+		userLogger.WithError(err).WithField("username", username).Error("Error finding user by username")
 		return nil, errors.New("failed to retrieve user")
 	}
 	return &user, nil
@@ -87,7 +100,7 @@ func (us *userService) GetByID(id uint) (*models.User, error) {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, errors.New("user not found")
 		}
-		log.Printf("Error finding user: %v", err)
+		userLogger.WithError(err).WithField("user_id", id).Error("Error finding user by ID")
 		return nil, errors.New("failed to retrieve user")
 	}
 	return &user, nil

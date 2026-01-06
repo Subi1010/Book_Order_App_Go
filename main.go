@@ -4,6 +4,7 @@ import (
 	"log"
 
 	_ "book_order_app/docs"
+	"book_order_app/middleware"
 	"book_order_app/routers"
 
 	"github.com/gin-gonic/gin"
@@ -22,7 +23,12 @@ import (
 func main() {
 
 	// Initialize Gin router
-	r := gin.Default()
+	r := gin.New()
+
+	// Add middleware
+	r.Use(gin.Recovery())      // Panic recovery
+	r.Use(middleware.Logger()) // Custom logger
+
 	routers.RegisterRoutes(r)
 
 	// Start server

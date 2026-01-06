@@ -41,21 +41,28 @@ func (oc *OrderController) GetOrders(c *gin.Context) {
 // @Tags orders
 // @Accept json
 // @Produce json
-// @Param order body models.Order true "Order information"
+// @Param order body models.CreateOrderRequest true "Order information"
 // @Success 201 {object} models.Order
 // @Failure 400 {object} map[string]string
 // @Failure 404 {object} map[string]string
 // @Router /orders [post]
 func (oc *OrderController) PlaceOrder(c *gin.Context) {
-	var order models.Order
-	if err := c.ShouldBindJSON(&order); err != nil {
+	var req models.CreateOrderRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	if !oc.bookService.Exists(order.BookID) {
+	if !oc.bookService.Exists(req.BookID) {
 		c.JSON(http.StatusNotFound, gin.H{"error": "book not found"})
 		return
+	}
+
+	// Convert request to Order model
+	order := models.Order{
+		BookID:       req.BookID,
+		CustomerName: req.CustomerName,
+		Quantity:     req.Quantity,
 	}
 
 	created := oc.orderService.Create(order)

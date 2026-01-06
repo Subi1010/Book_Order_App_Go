@@ -2,9 +2,11 @@ package services
 
 import (
 	"book_order_app/config"
+	"book_order_app/middleware"
 	"book_order_app/models"
-	"log"
 )
+
+var logger = middleware.GetLogger()
 
 type BookService interface {
 	GetAll() []models.Book
@@ -24,17 +26,22 @@ func NewBookService() BookService {
 func (bs *bookService) GetAll() []models.Book {
 	var books []models.Book
 	if err := bs.dbHandler.DB.Find(&books).Error; err != nil {
-		log.Printf("Error fetching books: %v", err)
+		logger.WithError(err).Error("Error fetching books")
 		return []models.Book{}
 	}
+	logger.WithField("count", len(books)).Info("Successfully fetched books")
 	return books
 }
 
 func (bs *bookService) Create(book models.Book) models.Book {
 	if err := bs.dbHandler.DB.Create(&book).Error; err != nil {
-		log.Printf("Error creating book: %v", err)
+		logger.WithError(err).WithField("book", book.Title).Error("Error creating book")
 		return book
 	}
+	logger.WithFields(map[string]interface{}{
+		"book_id": book.ID,
+		"title":   book.Title,
+	}).Info("Successfully created book")
 	return book
 }
 
