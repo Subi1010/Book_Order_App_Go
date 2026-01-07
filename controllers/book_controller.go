@@ -58,3 +58,23 @@ func (bc *BookController) AddBook(c *gin.Context) {
 	created := bc.service.Create(book)
 	c.JSON(http.StatusCreated, created)
 }
+
+// GetBookById godoc
+// @Summary Get a book by ID
+// @Description Get a book by its ID
+// @Tags books
+// @Accept json
+// @Produce json
+// @Param bookId path string true "Book ID"
+// @Success 200 {object} models.Book
+// @Failure 404 {object} map[string]string
+// @Router /books/{bookId} [get]
+func (bc *BookController) GetBookById(c *gin.Context) {
+	bookId := c.Param("bookId")
+	res, err := bc.service.GetBookById(bookId)
+	if err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, res)
+}

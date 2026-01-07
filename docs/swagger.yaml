@@ -206,6 +206,33 @@ paths:
       summary: Add a new book
       tags:
       - books
+  /books/{bookId}:
+    get:
+      consumes:
+      - application/json
+      description: Get a book by its ID
+      parameters:
+      - description: Book ID
+        in: path
+        name: bookId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Book'
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get a book by ID
+      tags:
+      - books
   /orders:
     get:
       consumes:

@@ -11,6 +11,7 @@ var logger = middleware.GetLogger()
 type BookService interface {
 	GetAll() []models.Book
 	Create(book models.Book) models.Book
+	GetBookById(bookId string) (models.Book, error)
 	Exists(id uint) bool
 }
 
@@ -43,6 +44,16 @@ func (bs *bookService) Create(book models.Book) models.Book {
 		"title":   book.Title,
 	}).Info("Successfully created book")
 	return book
+}
+
+func (bs *bookService) GetBookById(bookId string) (models.Book, error) {
+	var book models.Book
+	if err := bs.dbHandler.DB.First(&book, bookId).Error; err != nil {
+		logger.WithError(err).Error("Error fetching book") //after this logs the log in the logger.go will be printed for error
+		return models.Book{}, err
+	}
+	logger.Info("Successfully fetched books") //after this logs the log in the logger.go will be printed for success
+	return book, nil
 }
 
 func (bs *bookService) Exists(id uint) bool {

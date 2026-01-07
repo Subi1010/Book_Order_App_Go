@@ -12,6 +12,7 @@ func RegisterBookRoutes(rg *gin.RouterGroup) {
 	books := rg.Group("/books")
 	{
 		books.GET("", bookController.GetBooks)
+		books.GET("/:bookId", bookController.GetBookById)
 		books.POST("", middleware.AuthMiddleware(), middleware.RequireRole("admin"), bookController.AddBook)
 	}
 }
